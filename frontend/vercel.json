@@ -1,0 +1,14 @@
+
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://studyflow-backend-nahz.onrender.com/api/:path*"
+    },
+    {
+      "source": "/actuator/:path*",
+      "destination": "https://studyflow-backend-nahz.onrender.com/actuator/:path*"
+    }
+  ]
+}
+
