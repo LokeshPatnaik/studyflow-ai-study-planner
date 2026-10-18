@@ -1,0 +1,17 @@
+export type Student = { id: string; name: string; email: string; demo: boolean }
+export type Preference = { dailyStudyMinutes: number; sessionMinutes: number; breakMinutes: number; preferredDays: string[]; dayStart: string; dayEnd: string; revisionPreference: string }
+export type Subject = { id: string; name: string; color: string; priority: number; examName: string; examDate: string | null; topicCount: number; completedTopics: number }
+export type SourceText = { text: string; page: number | null; heading: boolean }
+export type Topic = { id: string; subjectId: string; title: string; unit: string | null; chapter: string | null; description: string | null; difficulty: string; estimatedMinutes: number; importance: number; familiarity: number; included: boolean; approved: boolean; originalTitle: string | null; originalUnit: string | null; sourceContent?: SourceText[] }
+export type Task = { id: string; planId: string; subjectId: string; topicId: string | null; subjectName: string; subjectColor: string; title: string; description: string; scheduledDate: string; startTime: string | null; endTime: string | null; durationMinutes: number; priority: string; status: string; examDate: string | null; sessionType?: string; revisionNumber?: number; actualMinutes?: number | null; notes?: string | null; confidence?: number | null }
+export type WorkloadTopic = { topicId: string; subjectId: string; subjectName: string; title: string; examDate: string; importance: number; learningMinutes: number; practiceMinutes: number; revisionMinutes: number; totalMinutes: number; scheduledMinutes: number; unscheduledMinutes: number }
+export type Workload = { estimatedMinutes: number; availableCapacityMinutes: number; bufferMinutes: number; scheduledMinutes: number; shortfallMinutes: number; topics: WorkloadTopic[] }
+export type Plan = { id: string | null; title: string; status: string; aiMode: string; summary: string; feasible: boolean; conflicts: string[]; tasks: Task[]; workload?: Workload | null }
+export type Progress = { total: number; completed: number; pending: number; missed: number; completionPercent: number; subjects: { subjectId: string; subjectName: string; color: string; total: number; completed: number; percent: number }[]; week: { day: string; plannedMinutes: number; completedMinutes: number }[] }
+export type ParsedTopic = { title: string; unit: string | null; chapter: string | null; description: string | null; difficulty: string; estimatedMinutes: number; importance: number; familiarity: number; included: boolean; sourceContent: SourceText[] }
+export type SyllabusResult = { parsed: boolean; requiresOcr: boolean; message: string; extractedText: string; topics: ParsedTopic[] }
+export type ProposedTask = { taskId: string | null; subjectId: string; topicId: string | null; subjectName: string; title: string; description: string; scheduledDate: string; startTime: string | null; endTime: string | null; durationMinutes: number; priority: string; examDate: string | null }
+export type Revision = { id: string; planId: string; status: string; reason: string; proposedTasks: ProposedTask[]; originalTasks: Task[]; createdAt: string }
+export type ToolActivity = { name: string; status: string; inputSummary: string; outputSummary: string | null; errorMessage: string | null; createdAt: string }
+export type AgentRun = { id: string; stage: string; status: string; mode: string; summary: string; createdAt: string; stageHistory: string[]; tools: ToolActivity[] }
+

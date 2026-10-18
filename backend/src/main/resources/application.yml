@@ -1,0 +1,48 @@
+server:
+  port: 8080
+  error:
+    include-message: never
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        same-site: lax
+        secure: ${SESSION_COOKIE_SECURE:false}
+spring:
+  application:
+    name: ai-study-planner-agent
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/study_planner}
+    username: ${DATABASE_USERNAME:planner}
+    password: ${DATABASE_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+app:
+  origin: ${APP_ORIGIN:http://localhost:5173}
+  demo-mode: ${DEMO_MODE:false}
+  openai:
+    api-key: ${OPENAI_API_KEY:}
+    model: ${OPENAI_MODEL:gpt-4o-mini}
+    timeout-seconds: 25
+

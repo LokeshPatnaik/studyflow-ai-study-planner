@@ -1,0 +1,41 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-study_planner}
+      POSTGRES_USER: ${POSTGRES_USER:-planner}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-planner_local_only}
+    ports:
+      - "5432:5432"
+    volumes:
+      - planner_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-planner} -d ${POSTGRES_DB:-study_planner}"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-study_planner}
+      DATABASE_USERNAME: ${POSTGRES_USER:-planner}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-planner_local_only}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+      DEMO_MODE: ${DEMO_MODE:-true}
+      APP_ORIGIN: http://localhost:5173
+      SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-false}
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+volumes:
+  planner_db:
+

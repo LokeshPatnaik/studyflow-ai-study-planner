@@ -1,0 +1,74 @@
+.command-hint {
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+}
+
+.command-hint:hover {
+  color: #d5d0ff;
+  border-color: #7164b8;
+}
+
+.landing-nav {
+  position: relative;
+}
+
+.landing-mobile-nav {
+  position: absolute;
+  top: calc(100% - 1px);
+  right: 14px;
+  z-index: 30;
+  min-width: 190px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid #2a344a;
+  border-radius: 10px;
+  background: #121a2b;
+  box-shadow: 0 16px 38px #05081299;
+}
+
+.landing-mobile-nav a,
+.landing-mobile-nav button {
+  width: 100%;
+  padding: 10px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #d9deea;
+  text-align: left;
+  text-decoration: none;
+  font: inherit;
+  font-size: 12px;
+}
+
+.landing-mobile-nav a:hover,
+.landing-mobile-nav button:hover {
+  background: #ffffff0c;
+}
+
+.calendar-exam-event {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 8px;
+  border: 1px solid #755a32;
+  border-left: 3px solid #f2b86b;
+  border-radius: 7px;
+  background: #342919;
+  color: #f3d8ab;
+  font-size: 9px;
+}
+
+.calendar-exam-event > span {
+  color: #e8b96e;
+  font-size: 7px;
+  font-weight: 750;
+  letter-spacing: .1em;
+}
+
+.calendar-exam-event > small {
+  color: #bfae91;
+  font-size: 8px;
+}

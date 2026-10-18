@@ -1,0 +1,30 @@
+node_modules/
+frontend/dist/
+frontend/.env.local
+backend/target/
+backend/.env
+.env
+.idea/
+.vscode/
+*.iml
+*.log
+uploads/
+coverage/
+*.tsbuildinfo
+frontend/vite.config.js
+frontend/vite.config.d.ts
+frontend/vitest.config.js
+frontend/vitest.config.d.ts
+
+
+# Environment secrets
+.env.*
+!.env.example
+backend/.env.*
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+# Local database and IDE files
+*.dump
+*.sql.gz
