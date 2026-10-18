@@ -1,97 +1,330 @@
-# AI Study Planner Agent
+# Studyflow — Agentic AI Study Planner
 
-A full-stack study planning application for a 5th-semester B.E. CSE Agentic AI project. It combines a React/TypeScript UI, a Java 21 / Spring Boot 3 REST API, PostgreSQL + Flyway, deterministic timetable validation, and a bounded OpenAI tool-calling workflow. When no API key is configured, planning remains usable through a clearly labeled rule-based mode.
+<p align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=25&pause=1000&color=6C63FF&center=true&vCenter=true&width=800&lines=Your+Syllabus%2C+Organized+by+AI;Plan+Smarter.+Study+Better.;An+Agentic+AI+Study+Planning+System" alt="Animated Studyflow tagline" />
+</p>
 
-## Run locally on Windows
+<p align="center">
+  An AI-powered study planning application that helps students transform their syllabus, deadlines, and availability into an organized study plan.
+</p>
 
-Requirements: PostgreSQL 16 or newer (PostgreSQL 18 is supported), Java 21, Maven 3.6.3+, and Node.js 20.19+ (or 22.12+). Docker is optional. Spring Boot runs Flyway migrations against the configured database; it does not drop tables.
+<p align="center">
+  <img src="https://img.shields.io/badge/Domain-Agentic%20AI-7C3AED?style=for-the-badge" alt="Agentic AI" />
+  <img src="https://img.shields.io/badge/Backend-Java%20%7C%20Spring%20Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white" alt="Java and Spring Boot" />
+  <img src="https://img.shields.io/badge/Frontend-React%20%7C%20TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="React and TypeScript" />
+  <img src="https://img.shields.io/badge/Database-PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+</p>
 
-### 1. Prepare PostgreSQL
+<p align="center">
+  <a href="https://github.com/LokeshPatnaik/studyflow-ai-study-planner">Repository</a> •
+  <a href="#-about-the-project">About</a> •
+  <a href="#-agentic-ai-how-it-works">Agentic AI</a> •
+  <a href="#-technology-stack">Tech Stack</a> •
+  <a href="#-getting-started">Setup</a>
+</p>
 
-Create a local database and login if you do not already have them. Run these commands in `psql` as a PostgreSQL administrator, changing the password to your own value:
+---
 
-```sql
-CREATE ROLE planner LOGIN PASSWORD 'choose-a-local-password';
-CREATE DATABASE study_planner OWNER planner;
+## 📌 About the Project
+
+**Studyflow** is an Agentic AI-based personalized study planner designed to make academic planning more organized and manageable.
+
+Students often struggle to break down a large syllabus, estimate the time required for each topic, manage multiple subjects, and prepare for exams without last-minute pressure.
+
+Studyflow addresses this problem by combining a full-stack web application with an AI-powered, tool-based workflow.
+
+Instead of treating study planning as only a timetable-generation problem, the project explores how a language model can work with application tools to support a structured planning process.
+
+### 🎯 Project Objectives
+
+- Organize syllabus content into meaningful study topics.
+- Help students estimate the time required for individual topics.
+- Generate study plans around deadlines and available study time.
+- Support changes to topics and schedules as planning needs evolve.
+- Demonstrate how LLM function calling can connect AI reasoning with real application operations.
+
+## 🤖 Agentic AI — The Core of Studyflow
+
+**The central idea is to move beyond an AI that only generates text toward an AI workflow that can use tools to help accomplish a goal.**
+
+Studyflow integrates the OpenAI API with a function-calling client and a registered set of application tools.
+
+### Which AI technology does it use?
+
+| Component | Role |
+|---|---|
+| OpenAI API | Provides access to the language model used for AI-related tasks. |
+| OpenAI function calling | Allows the model to request supported application tools using structured arguments. |
+| `OpenAiFunctionCallingClient.java` | Connects the backend's agent workflow to the model's function-calling interface. |
+| `AgentService.java` | Coordinates the agent workflow. |
+| `AgentToolRegistry.java` | Defines or registers the tools available to the agent. |
+| `SyllabusTopicParser.java` | Supports parsing syllabus content into topics. |
+| `SyllabusTopicGrouper.java` | Supports grouping syllabus content into more meaningful study units. |
+
+The example configuration specifies `gpt-4o-mini` as the OpenAI model. The actual model used depends on the runtime configuration.
+
+### How does the Agentic AI workflow work?
+
+```mermaid
+flowchart TD
+    A["Student provides syllabus and planning preferences"] --> B["Spring Boot Backend"]
+    B --> C["Agent Service"]
+    C --> D["OpenAI Model"]
+    D --> E{"Tool call required?"}
+    E -- Yes --> F["Registered Application Tool"]
+    F --> G["Tool Execution and Result"]
+    G --> D
+    E -- No --> H["Final AI Response"]
+    H --> I["Study Plan and User Interface"]
+    I --> J["PostgreSQL Persistence"]
 ```
 
-If the role or database already exists, keep it and use its current credentials. Do not drop or recreate an existing database.
+The diagram represents the intended tool-calling interaction at a high level. The precise execution sequence depends on the implemented agent workflow.
 
-### 2. Start the backend
+### What makes this agentic?
 
-Open PowerShell in the project folder. Set these variables for the current terminal, using the credentials for your local PostgreSQL database:
+- **Model integration:** the application can use a language model for supported AI tasks.
+- **Tool calling:** the model can request registered tools instead of only returning a plain-text answer.
+- **Application execution:** the backend handles supported tool operations.
+- **Result-based workflow:** tool results can be returned to the model as part of a function-calling interaction.
+- **Structured application:** Java services, the database, and the frontend make the resulting study-planning workflow usable.
+
+> **Important distinction:** The OpenAI model provides language-model intelligence; Spring Boot executes application operations; PostgreSQL stores application data. The model does not automatically control the entire application, and ordinary scheduling rules should not be described as AI reasoning unless they actually use the model.
+
+## ✨ Key Features
+
+### 📚 Syllabus Organization
+- Parse syllabus content into study topics.
+- Group related content into manageable learning units.
+- Review and adjust topics before using them in a plan.
+
+### 🧠 Personalized Study Planning
+- Organize study activities around deadlines and availability.
+- Account for planning preferences and time constraints.
+- Estimate topic duration and distribute study work across available time.
+
+### 📅 Schedule Management
+- Organize planned study sessions.
+- Review and revise planning decisions when requirements change.
+- Keep study planning information organized in the application.
+
+### 🔄 Revision and Progress Support
+- Support structured revision planning.
+- Review planned activities and make adjustments where supported by the application.
+- Keep planning data persistent through the backend and database.
+
+*Feature availability and exact behavior depend on the implemented application version.*
+
+## 🏗️ System Architecture
+
+Studyflow follows a full-stack architecture:
+
+```mermaid
+flowchart LR
+    U["Student"] <--> F["React + TypeScript"]
+    F <--> A["Spring Boot REST API"]
+    A <--> AG["Agent Service"]
+    AG <--> AI["OpenAI API"]
+    AG <--> T["Registered Tools"]
+    A <--> DB[("PostgreSQL")]
+```
+
+### Architecture Layers
+
+**Frontend — React and TypeScript**
+- Presents the user interface.
+- Collects syllabus and study-planning information.
+- Displays planning results and application data.
+
+**Backend — Java and Spring Boot**
+- Exposes application APIs.
+- Coordinates application services and agent workflows.
+- Validates requests and manages interactions with the database.
+
+**AI Layer — OpenAI API**
+- Supports language-model tasks.
+- Uses function calling to request registered tools where appropriate.
+- Participates in the agent workflow implemented by the backend.
+
+**Database — PostgreSQL**
+- Stores persistent application data.
+- Supports retrieval and management of study-planning information.
+
+## 🛠️ Technology Stack
+
+| Technology | Purpose |
+|---|---|
+| Java 21 | Backend programming language |
+| Spring Boot | REST APIs and backend services |
+| React | User interface |
+| TypeScript | Frontend type safety |
+| PostgreSQL | Relational database |
+| OpenAI API | Language-model integration |
+| OpenAI function calling | Structured requests for application tools |
+| Maven | Backend dependency management and builds |
+| npm | Frontend dependency management |
+| Git and GitHub | Version control and source-code hosting |
+
+## 📂 Project Structure
+
+```text
+studyflow-ai-study-planner/
+├── backend/
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/
+│   │   │   │   └── .../agent/
+│   │   │   │       ├── AgentService.java
+│   │   │   │       ├── AgentToolRegistry.java
+│   │   │   │       ├── OpenAiFunctionCallingClient.java
+│   │   │   │       ├── SyllabusTopicParser.java
+│   │   │   │       └── SyllabusTopicGrouper.java
+│   │   │   └── resources/
+│   │   └── test/
+│   └── pom.xml
+├── frontend/
+│   ├── src/
+│   ├── package.json
+│   └── ...
+├── docs/
+├── scripts/
+├── docker-compose.yml
+├── .env.example
+├── .gitignore
+└── README.md
+```
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+Install the following tools before running the application:
+
+- Java 21
+- Maven
+- Node.js and npm
+- PostgreSQL
+- Git
+
+An OpenAI API key is needed for model-backed functionality when it is enabled in the application configuration.
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/LokeshPatnaik/studyflow-ai-study-planner.git
+cd studyflow-ai-study-planner
+```
+
+### 2. Configure environment variables
+
+Use `.env.example` as a reference for the required configuration.
+
+Configure the variables in your terminal or local environment. For the local backend, the application uses the following settings:
+
+```text
+DATABASE_URL=jdbc:postgresql://localhost:5432/study_planner
+DATABASE_USERNAME=planner
+DATABASE_PASSWORD=your_local_database_password
+OPENAI_API_KEY=your_openai_api_key
+OPENAI_MODEL=gpt-4o-mini
+APP_ORIGIN=http://localhost:5173
+```
+
+Use your own local database credentials. Do not commit real API keys or passwords to GitHub.
+
+### 3. Prepare PostgreSQL
+
+Create a PostgreSQL database and user matching your local configuration. Ensure PostgreSQL is running before starting the backend.
+
+Database migrations are managed by the application's configured migration system.
+
+### 4. Start the backend
+
+Open a terminal:
 
 ```powershell
+cd backend
+
 $env:DATABASE_URL = "jdbc:postgresql://localhost:5432/study_planner"
 $env:DATABASE_USERNAME = "planner"
-$env:DATABASE_PASSWORD = "your-local-database-password"
-$env:DEMO_MODE = "true"
-$env:APP_ORIGIN = "http://localhost:5173"
-Set-Location .\backend
+$env:DATABASE_PASSWORD = Read-Host "Enter your database password"
+
 mvn spring-boot:run
 ```
 
-The demo account is initialized only when `DEMO_MODE=true` and the account is absent:
+The backend is expected to run at:
 
-- Email: `demo@planner.local`
-- Password: `DemoPass123!`
+`http://localhost:8080`
 
-The initializer leaves an existing account and its data untouched. The health endpoint is <http://localhost:8080/actuator/health>.
+### 5. Start the frontend
 
-### 3. Start the frontend
-
-Open a second PowerShell window in the project folder:
-
-```powershell
-Set-Location .\frontend
-npm ci
-npm run dev
-```
-
-Open <http://localhost:5173>. Vite proxies `/api` requests to port 8080 and includes the session and CSRF cookies.
-
-The root `.env` file is optional; the commands above configure the backend directly and do not create or overwrite it. For local Spring Boot runs, set `OPENAI_API_KEY` in the backend PowerShell process before starting Spring Boot; Spring Boot does not load a root `.env` file automatically. Docker Compose reads the root `.env` file. Never put the key in a frontend environment file.
-
-Docker Compose remains available as an optional local PostgreSQL demo environment. `scripts\start-demo.ps1` and `scripts\stop-demo.ps1` manage that optional stack.
-
-## Before public deployment
-
-This project is verified for local development and course-project use; it is not deployment-ready by default. Before exposing it publicly, use a managed PostgreSQL database with tested backups and restore procedures, set unique secrets through the deployment secret manager, configure `SESSION_COOKIE_SECURE=true` behind HTTPS, set `APP_ORIGIN` to the exact public frontend origin, disable demo seeding, restrict or remove public API documentation, and add rate limits for authentication and AI/PDF endpoints. Add centralized logs, metrics, alerting, and an incident/retention policy for student data. Do not expose the local database defaults or the optional demo workspace to public traffic.
-
-## AI configuration
-
-Set `OPENAI_API_KEY` in the backend process environment or root `.env`. The backend calls the OpenAI Chat Completions API with registered function tools, validates every result locally, and limits the tool loop. `OPENAI_MODEL` defaults to `gpt-4o-mini` and can be changed to a model available to your API account. If no key is set or the service fails, a deterministic planner runs and the UI identifies it as **Rule-based**.
-
-## Study workspace
-
-The signed-in workspace has a collapsible navigation rail and a saved light/dark theme. Use **My study plans** to select subjects, tune availability and revision preferences, generate a draft, review its scheduled sessions, and approve it. Use **Subjects & topics** to edit hierarchy, estimated time, importance, familiarity, and inclusion; use **Syllabus library** to extract and review PDF suggestions. The calendar supports week/month views and persists valid drag-to-move changes. Completing all learning sessions for a topic schedules available spaced-recall sessions.
-
-Flyway V2 adds nullable/defaulted topic metadata and task session metadata without dropping or rebuilding existing tables. The migration runs when the backend starts. Back up a production database before any schema deployment, as part of your normal migration process.
-
-## Windows helper
-
-Run `scripts\start-demo.ps1` to start the Docker Compose stack and open the browser. Use `scripts\stop-demo.ps1` to stop the containers while preserving the database volume.
-
-## Quality checks
+Open a second terminal:
 
 ```powershell
 cd frontend
-npm test
-npm run build
-cd ..\backend
+npm install
+npm run dev -- --host 127.0.0.1
+```
+
+Open the frontend URL printed by Vite, normally:
+
+`http://127.0.0.1:5173`
+
+### Configuration Notes
+
+- Configure the OpenAI API key only in your local environment or deployment secret settings.
+- Keep database credentials private.
+- Confirm the required environment variables against the application configuration before deploying.
+- The example configuration is a template; it does not contain production credentials.
+
+## 🔐 Security
+
+- Never commit API keys, database passwords, or other secrets.
+- Keep local `.env` files out of version control.
+- Use environment variables or the hosting provider's secret manager for deployment.
+- Review authentication, authorization, session handling, and production database access before exposing the application publicly.
+
+## 🧪 Testing
+
+Run backend tests from the `backend` directory:
+
+```bash
 mvn test
-mvn package
 ```
 
-## Project map
+Run frontend tests using the scripts defined in `frontend/package.json`. For example, if the project provides a test script:
 
-```text
-frontend/       React, TypeScript, Vite, Tailwind CSS, Recharts, Lucide
-backend/        Spring Boot REST API, security, JPA, scheduling, agent tools
-docs/           Architecture, API examples, workflow and schema diagrams
-scripts/        Windows demo start and stop helpers
-docker-compose.yml
+```bash
+npm test
 ```
 
-See [docs/architecture.md](docs/architecture.md) for the architecture, endpoints, constraints, and known limitations.
+A successful local run is not a substitute for verifying a deployed application and its external services.
 
+## 🗺️ Future Improvements
+
+Potential areas for further development include:
+
+- More adaptive planning based on study progress.
+- Better explanations of why a schedule was generated.
+- More robust handling of missed sessions and changed deadlines.
+- Clearer visibility into agent tool calls and their results.
+- Additional evaluation of AI-generated outputs and tool-call reliability.
+- Deployment monitoring and production readiness improvements.
+
+## 🎓 Learning Outcomes
+
+This project explores practical full-stack development and the integration of language models with backend application logic.
+
+It brings together:
+
+- Agentic AI concepts and function calling.
+- Java and Spring Boot backend development.
+- React and TypeScript frontend development.
+- Relational database integration using PostgreSQL.
+- Environment configuration, version control, and application architecture.
+
+---
+
+<p align="center">
+  <b>Studyflow — Plan with clarity. Study with purpose.</b>
+</p>
